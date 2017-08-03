@@ -8,6 +8,8 @@ class Tower:
     def add(self, ring_size:int):
         if len(self.rings) >= self.capacity:
             raise IndexError('Tower already at max capacity')
+        if (len(self.rings) > 0) and (ring_size >= self.rings[-1]):
+            raise ValueError("Trying to add ring of size %d on top of ring of size %d" % (ring_size, self.rings[-1]))
         self.rings.append(ring_size)
 
     def pop(self) -> int:
