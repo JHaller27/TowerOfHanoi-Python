@@ -1,27 +1,88 @@
-def move_tower(size:int, src_peg:int, dest_peg:int):
+class Tower:
+    __slots__ = 'rings', 'capacity'
+
+    def __init__(self, cap: int):
+        self.rings = list()
+        self.capacity = cap
+
+    def add(self, ring_size:int):
+        if len(self.rings) >= self.capacity:
+            raise IndexError('Tower already at max capacity')
+        self.rings.append(ring_size)
+
+    def pop(self) -> int:
+        if len(self.rings) <= 0:
+            raise IndexError('Tower empty')
+        return self.rings.pop()
+
+    def get(self, depth: int) -> int:
+        return self.rings[-1 * (depth + 1)]
+
+
+def print_towers(towers: list, size=None):
+    if size is None:
+        size = towers[0].capacity
+
+    # Pad tower lists with zeros
+    tower_list = list()
+    for tower in towers:
+        tl = list(tower.rings)
+        while len(tl) < size:
+            tl.append(0)
+        tower_list.append(tl)
+
+    for row in range(size):
+        for tower in tower_list:
+            ring_size = tower[size - row - 1]
+            whitespace = padding(size - ring_size + 1)
+            ring_space = padding(ring_size, '-')
+            print(whitespace + ring_space + '|' + ring_space + whitespace, end=' ')
+        print()
+
+    for tower in tower_list:
+        print(padding(2 * (size + 1) + 1, character='='), end=' ')
+
+
+def padding(width: int, character=' ') -> str:
+    pad = ''
+    for i in range(width):
+        pad += character
+
+    return pad
+
+
+def move_tower(towers: list, size: int, src: int, dest: int):
     if size == 1:
-        print("  Peg %d -> Peg %d" % (src_peg, dest_peg))
+        towers[dest].add(towers[src].pop())
+        print_towers(towers)
     else:
         # Determine temp peg
         all_pegs = list(range(1,4))
-        all_pegs.remove(src_peg)
-        all_pegs.remove(dest_peg)
+        all_pegs.remove(src)
+        all_pegs.remove(dest)
         temp_peg = all_pegs[0]
 
         # Move top tower (size n-1) to temp peg
-        move_tower(size-1, src_peg, temp_peg)
+        move_tower(towers, size-1, src, temp_peg)
 
         # Move bottom ring to destination peg
-        move_tower(1, src_peg, dest_peg)
+        move_tower(towers, 1, src, dest)
 
         # Move rest of tower to destination peg
-        move_tower(size-1, temp_peg, dest_peg)
+        move_tower(towers, size-1, temp_peg, dest)
 
 
 def main():
     size = int(input("Input tower size... "))
-    print("Steps to solve...")
-    move_tower(size, 1, 2)
+    towers = list()
+
+    for i in range(3):
+        towers.append(Tower(size))
+    for ring in range(size, 0, -1):
+        towers[0].add(ring)
+
+    print_towers(towers)
+    #move_tower(towers, size, 1, 2)
 
 if __name__ == '__main__':
     main()
