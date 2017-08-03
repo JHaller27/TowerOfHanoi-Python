@@ -39,11 +39,11 @@ def print_towers(towers: list, size=None):
             print(whitespace + ring_space + '|' + ring_space + whitespace, end=' ')
         print()
 
-    for tower in tower_list:
-        print(padding(2 * (size + 1) + 1, character='='), end=' ')
+    for idx in range(len(tower_list)):
+        base = padding((size + 1), character='=')
+        print("%s%d%s" % (base, idx + 1, base), end=' ')
 
-    print()
-    print()
+    print("\n")
 
 
 def padding(width: int, character=' ') -> str:
@@ -57,6 +57,7 @@ def padding(width: int, character=' ') -> str:
 def move_tower(towers: list, size: int, src: int, dest: int):
     if size == 1:
         towers[dest].add(towers[src].pop())
+        print("\nTower %d -> Tower %d" % (src + 1, dest + 1))
         print_towers(towers)
     else:
         # Determine temp peg
@@ -84,6 +85,7 @@ def main():
     for ring in range(size, 0, -1):
         towers[0].add(ring)
 
+    print("\nInitial configuration")
     print_towers(towers)
     move_tower(towers, size, 0, 1)
 
